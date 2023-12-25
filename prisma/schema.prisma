@@ -1,0 +1,140 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id            String         @unique @default(uuid())
+  f_name        String?
+  u_name        String?
+  email         String?
+  birth_date    DateTime?
+  phone         String
+  address       String?
+  language      Int?           @default(0)
+  dark_mode     Int?           @default(0)
+  pass_code     Int?
+  amount        Float          @default(0)
+  account_id    String?        @unique
+  active        Boolean        @default(true)
+  image         user_images[]
+  gender        Int?           @default(0)
+  code          Int?
+  age           String?
+  devices       devices[]
+  genres        genre[]
+  // bought_book 
+  notifications notification[]
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  review        review?        @relation(fields: [reviewId], references: [id])
+  reviewId      String?
+}
+
+model genre {
+  id         String         @unique @default(uuid())
+  name       String
+  image      genre_images[]
+  created_at DateTime       @default(now())
+  updated_at DateTime       @updatedAt
+  book       book?          @relation(fields: [bookId], references: [id])
+  bookId     String?
+  user       user?          @relation(fields: [userId], references: [id])
+  userId     String?
+}
+
+model notification {
+  id         String   @unique @default(uuid())
+  title      String
+  desc       String
+  type       Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user       user?    @relation(fields: [userId], references: [id])
+  userId     String?
+}
+
+model devices {
+  id          String   @unique @default(uuid())
+  phone_id    String
+  phone_model String
+  last_date   String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  user        user?    @relation(fields: [userId], references: [id])
+  userId      String?
+}
+
+model book_images {
+  id     String  @unique @default(uuid())
+  x      String
+  xx     String
+  xl     String
+  xm     String
+  book   book?   @relation(fields: [bookId], references: [id])
+  bookId String?
+}
+
+model user_images {
+  id     String  @unique @default(uuid())
+  x      String
+  xx     String
+  xl     String
+  xm     String
+  user   user?   @relation(fields: [userId], references: [id])
+  userId String?
+}
+
+model genre_images {
+  id      String  @unique @default(uuid())
+  x       String
+  xx      String
+  xl      String
+  xm      String
+  genre   genre?  @relation(fields: [genreId], references: [id])
+  genreId String?
+}
+
+model book {
+  id               String        @unique @default(uuid())
+  title            String
+  desc             String
+  language         Int?          @default(0)
+  author           author        @relation(fields: [authorId], references: [id])
+  age              String
+  pages            Int
+  price            Float
+  genre            genre[]
+  purchase         Int?          @default(0)
+  size             Float?
+  sertificate_code BigInt?
+  image            book_images[]
+  authorId         String
+  review           review[]
+  created_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt
+}
+
+model author {
+  id         String   @unique @default(uuid())
+  name       String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  book       book[]
+}
+
+model review {
+  id      String @unique @default(uuid())
+  message String
+  star    Float
+  user    user[]
+  book    book   @relation(fields: [bookId], references: [id])
+  bookId  String
+}

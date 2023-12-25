@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    environment:
+       POSTGRES_PASSWORD : 1
+       POSTGRES_DB : alibook
+    ports:
+      - '8000:5432'
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    env_file:
+      - .env  
+  server:
+    container_name: alibookbackend
+    image: alibookbackend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm run start:dev
+    env_file:
+      - .env
+    ports:
+      - 3000:3000
+    environment:
+      DATABASE_URL: "postgresql://postgres:1@postgres:8000/alibook?connect_timeout=300"
+    networks:
+      - api
+    restart : always
+    depends_on:
+      - postgres
+
+
+networks:
+  api:
+volumes:
+  postgres:
