@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  uid          String     @unique
+  full_name    String
+  phone_number String
+  otp          String
+  language     String
+  dark_mode    Boolean
+  balance      Float
+  gender       Int
+  age          String
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
+  UserImage    UserImage? @relation(fields: [userImageId], references: [id])
+  userImageId  String?
+  Review       Review[]
+}
+
+model UserImage {
+  id         String   @id @default(cuid())
+  url        String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  User       User[]
+}
+
+model Book {
+  id           String     @id @default(cuid())
+  title        String
+  author       String
+  description  String
+  price        Float
+  language     String
+  age          String
+  release_date DateTime
+  isbn         String
+  pages        Int
+  size         String
+  purchased    Int
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
+  BookImage    BookImage? @relation(fields: [bookImageId], references: [id])
+  bookImageId  String?
+  Pdf          Pdf?       @relation(fields: [pdfId], references: [id])
+  pdfId        String?
+  Review       Review[]
+  Category     Category[]
+}
+
+model BookImage {
+  id         String   @id @default(cuid())
+  url        String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  Book       Book[]
+}
+
+model Pdf {
+  id         String   @id @default(cuid())
+  url        String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  Book       Book[]
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  user_id    String
+  book_id    String
+  rating     Float
+  comment    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  User       User     @relation(fields: [user_id], references: [id])
+  Book       Book     @relation(fields: [book_id], references: [id])
+}
+
+model Category {
+  id         String   @id @default(cuid())
+  name       String
+  image_url  String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  Book       Book?    @relation(fields: [bookId], references: [id])
+  bookId     String?
+}
