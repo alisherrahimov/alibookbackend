@@ -6,5 +6,5 @@ export class BookIdDto {
     example: '123123123123',
     required: true,
   })
-  book_id: number;
+  book_id: string;
 }

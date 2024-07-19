@@ -29,6 +29,8 @@ model User {
   UserImage    UserImage? @relation(fields: [userImageId], references: [id])
   userImageId  String?
   Review       Review[]
+  Wishlist     Wishlist[]
+  Category     Category[]
 }
 
 model UserImage {
@@ -50,7 +52,6 @@ model Book {
   release_date DateTime
   isbn         String
   pages        Int
-  size         String
   purchased    Int
   created_at   DateTime   @default(now())
   updated_at   DateTime   @updatedAt
@@ -60,6 +61,7 @@ model Book {
   pdfId        String?
   Review       Review[]
   Category     Category[]
+  Wishlist     Wishlist[]
 }
 
 model BookImage {
@@ -98,4 +100,16 @@ model Category {
   updated_at DateTime @updatedAt
   Book       Book?    @relation(fields: [bookId], references: [id])
   bookId     String?
+  User       User?    @relation(fields: [userId], references: [id])
+  userId     String?
+}
+
+model Wishlist {
+  id         String   @id @default(cuid())
+  user_id    String
+  book_id    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  User       User     @relation(fields: [user_id], references: [id])
+  Book       Book     @relation(fields: [book_id], references: [id])
 }
